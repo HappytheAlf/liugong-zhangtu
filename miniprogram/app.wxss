@@ -1,0 +1,27 @@
+page {
+  background: #f4ecdd;
+  color: #2b241c;
+  font-family: "PingFang SC", "Microsoft YaHei", "Noto Sans CJK SC", sans-serif;
+  font-size: 28rpx;
+  line-height: 1.5;
+}
+
+view,
+text,
+button,
+input,
+picker {
+  box-sizing: border-box;
+}
+
+button {
+  margin: 0;
+  padding: 0;
+  line-height: 1.4;
+  border-radius: 0;
+  background: transparent;
+}
+
+button::after {
+  border: 0;
+}

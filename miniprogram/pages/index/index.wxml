@@ -1,0 +1,237 @@
+<view class="page">
+  <view class="hero">
+    <view class="brand">
+      <view class="seal">壬</view>
+      <view class="brand-copy">
+        <text class="eyebrow">XIAO LIU REN · MINI</text>
+        <view class="title">六宫 <text class="title-accent">掌图</text></view>
+        <text class="sub">农历日时 · 日起大安 · 离线可用</text>
+      </view>
+    </view>
+  </view>
+
+  <view class="mode-switch">
+    <view class="mode-item is-active">小六壬</view>
+    <view class="mode-item" bindtap="goMeihua">梅花易数</view>
+  </view>
+
+  <view class="panel input-panel">
+    <view class="panel-head">
+      <text class="h2">起课</text>
+      <text class="head-hint">选择入口 · 立即排盘</text>
+    </view>
+
+    <view class="tabs">
+      <view
+        wx:for="{{tabs}}"
+        wx:key="key"
+        class="tab {{mode === item.key ? 'is-active' : ''}}"
+        data-mode="{{item.key}}"
+        bindtap="onTab"
+      >{{item.label}}</view>
+    </view>
+
+    <view wx:if="{{mode === 'now'}}" class="mode-panel">
+      <view class="now-card">
+        <text class="now-time">{{nowTime}}</text>
+        <text class="now-date">{{nowDate}}</text>
+        <text class="now-lunar">{{nowLunar}}</text>
+        <text class="now-zi {{nowWarn ? 'is-warn' : ''}}">{{nowZi}}</text>
+      </view>
+      <button class="btn primary full" bindtap="castNow">以此刻起课</button>
+      <text class="hint">时间口径：北京时间（UTC+8）。23:00–23:59 仍属当日，00:00 起进次日。</text>
+    </view>
+
+    <view wx:if="{{mode === 'solar'}}" class="mode-panel">
+      <view class="field-grid">
+        <view class="field">
+          <text class="field-label">公历日期</text>
+          <picker mode="date" value="{{solarDate}}" bindchange="onSolarDateChange">
+            <view class="picker-value">{{solarDate}}</view>
+          </picker>
+        </view>
+        <view class="field">
+          <text class="field-label">时间（北京时间）</text>
+          <picker mode="time" value="{{solarTime}}" bindchange="onSolarTimeChange">
+            <view class="picker-value">{{solarTime}}</view>
+          </picker>
+        </view>
+      </view>
+      <text class="hint">支持公历 1900-01-31 至 2101-01-28；二十三时与零时边界会再次校验。</text>
+      <button class="btn primary full" bindtap="castSolar">按此时间起课</button>
+      <text wx:if="{{solarError}}" class="error">{{solarError}}</text>
+    </view>
+
+    <view wx:if="{{mode === 'lunar'}}" class="mode-panel">
+      <view class="field-grid">
+        <view class="field">
+          <text class="field-label">农历年</text>
+          <input class="field-input" type="number" value="{{lunarYear}}" bindinput="onLunarYearInput" />
+        </view>
+        <view class="field">
+          <text class="field-label">农历月</text>
+          <picker range="{{monthLabels}}" value="{{lunarMonthIndex}}" bindchange="onLunarMonthChange">
+            <view class="picker-value">{{monthLabels[lunarMonthIndex]}}</view>
+          </picker>
+        </view>
+        <view class="field">
+          <text class="field-label">农历日</text>
+          <picker range="{{dayLabels}}" value="{{lunarDayIndex}}" bindchange="onLunarDayChange">
+            <view class="picker-value">{{dayLabels[lunarDayIndex]}}</view>
+          </picker>
+        </view>
+        <view class="field">
+          <text class="field-label">时辰</text>
+          <picker range="{{hourLabels}}" value="{{lunarHourIndex}}" bindchange="onLunarHourChange">
+            <view class="picker-value">{{hourLabels[lunarHourIndex]}}</view>
+          </picker>
+        </view>
+      </view>
+
+      <view class="leap-row">
+        <text class="leap-label">闰月</text>
+        <switch checked="{{leap}}" disabled="{{!leapAvailable}}" color="#a33b2b" bindchange="onLeapChange" />
+        <text class="leap-hint">{{leapHint}}</text>
+      </view>
+      <text class="hint">{{lunarHint}}</text>
+      <text class="hint">{{dayHint}}</text>
+      <button class="btn primary full" bindtap="castLunar">按农历起课</button>
+      <text wx:if="{{lunarError}}" class="error">{{lunarError}}</text>
+    </view>
+
+    <view class="actions">
+      <button class="btn ghost" bindtap="randomCast">⚄ 随机起课</button>
+      <button class="btn ghost" bindtap="resetAll">重置为当前</button>
+    </view>
+
+    <view class="rules">
+      <view class="rules-toggle" bindtap="toggleRules">
+        <text class="rules-title">排盘规则与口径</text>
+        <text class="rules-action">{{rulesOpen ? '收起' : '展开'}}</text>
+      </view>
+      <view wx:if="{{rulesOpen}}" class="rules-body">
+        <text class="rules-line">六宫顺序：大安 → 留连 → 速喜 → 赤口 → 小吉 → 空亡。</text>
+        <text class="rules-line">日：大安起初一，顺数至农历日；三十日只在 30 天月可选。</text>
+        <text class="rules-line">时：日宫起子时，顺数至时辰；子时 23:00–00:59，00:00 换日。</text>
+        <text class="rules-line">盘面：日、时分别标在各自的落宫（终点宫）；每宫只列主支、全部藏干与后天八卦。</text>
+        <text class="rules-line">六亲：时宫为自身，其余按五行生克；非土自身以顺时针第一个土支为兄弟。</text>
+        <text class="rules-line">五星：从“日落宫”起木，顺排木、火、土、金、水、空。</text>
+      </view>
+    </view>
+  </view>
+
+  <view class="results" id="resultArea">
+    <view class="meta-grid">
+      <view class="meta-item">
+        <text class="meta-label">起课时间</text>
+        <text class="meta-value">{{result.meta.time}}</text>
+      </view>
+      <view class="meta-item">
+        <text class="meta-label">农历日期</text>
+        <text class="meta-value">{{result.meta.lunar}}</text>
+      </view>
+      <view class="meta-item">
+        <text class="meta-label">时辰与边界</text>
+        <text class="meta-value">{{result.meta.shichen}}</text>
+      </view>
+      <view class="meta-item">
+        <text class="meta-label">起课方式</text>
+        <text class="meta-value">{{result.meta.mode}}</text>
+      </view>
+    </view>
+    <text class="time-note">{{result.timeNote}}</text>
+
+    <view class="panel palm-panel">
+      <view class="panel-head">
+        <text class="h2">六宫掌图</text>
+        <view class="head-hint right">
+          <text>上排 留连 · 速喜 · 赤口</text>
+          <text>下排 大安 · 空亡 · 小吉</text>
+        </view>
+      </view>
+
+      <view class="chart-tools">
+        <text class="chart-tool-hint">双指缩放 · 双击放大 · 单指拖动 · {{chartScaleText}}</text>
+        <text class="chart-reset" bindtap="resetChartView">复位</text>
+      </view>
+
+      <movable-area class="chart-viewport" scale-area="{{true}}">
+        <movable-view
+          class="chart-mover"
+          direction="all"
+          scale="{{true}}"
+          scale-min="1"
+          scale-max="4"
+          scale-value="{{chartScale}}"
+          x="{{chartX}}"
+          y="{{chartY}}"
+          bindscale="onChartScale"
+          bindtap="onChartTap"
+        >
+          <view class="palm-chart">
+            <view class="palm-row" wx:for="{{result.palmRows}}" wx:for-item="row" wx:key="key">
+              <view
+                class="chart-cell theme-{{cell.theme}} {{cell.isFinal ? 'is-final' : ''}}"
+                wx:for="{{row.cells}}"
+                wx:for-item="cell"
+                wx:key="pos"
+              >
+                <view class="cell-head">
+                  <text class="cell-deity">{{cell.deity}}</text>
+                  <text class="cell-star {{cell.starVoid ? 'is-void' : ''}}">{{cell.star}}</text>
+                </view>
+
+                <view class="cell-branches">
+                  <view class="branch-main">
+                    <view class="branch-bagua">
+                      <text class="bagua-symbol">{{cell.symbol}}</text>
+                      <text class="bagua-name">{{cell.bagua}}</text>
+                    </view>
+                    <text class="branch-name">{{cell.primaryName}}</text>
+                  </view>
+                  <view class="branch-stems">
+                    <text wx:for="{{cell.stems}}" wx:for-item="stem" wx:key="*this" class="branch-stem">{{stem}}</text>
+                  </view>
+                </view>
+
+                <view class="cell-foot">
+                  <view class="cell-markers">
+                    <text
+                      wx:for="{{cell.markers}}"
+                      wx:for-item="marker"
+                      wx:key="key"
+                      class="marker marker-{{marker.key}}"
+                    >{{marker.label}}</text>
+                  </view>
+                  <view class="cell-namebox">
+                    <text class="cell-relative">{{cell.relative}}</text>
+                    <text class="cell-palace">{{cell.palace}}</text>
+                  </view>
+                </view>
+              </view>
+            </view>
+          </view>
+        </movable-view>
+      </movable-area>
+
+      <view class="palm-legend">
+        <text><text class="marker marker-day">日</text> 日落</text>
+        <text><text class="marker marker-hour">时</text> 时落</text>
+      </view>
+      <text class="palm-note">六神按地支；右上为五星，从“日落宫”起木顺排；地支居中，支下列全部藏干，左侧为后天八卦；六亲在右侧，时宫为自身；不再列跳过的地支。</text>
+    </view>
+
+    <button class="btn primary copy-btn" bindtap="copyResult">复制结果</button>
+    <text class="copy-status">{{copyStatus}}</text>
+
+    <view class="disclaimer">
+      <text class="disclaimer-strong">免责声明：</text>
+      <text>本工具仅依据传统小六壬“日时”掌诀进行机械排盘，属于民俗文化娱乐与自我反思参考，不构成预测、医疗、法律、投资、婚姻等任何专业建议。结果不包含吉凶断辞，请勿据此作出重大决定。</text>
+    </view>
+  </view>
+
+  <view class="footer">
+    <text>离线单页小程序 · 无外部请求</text>
+    <text>农历数据 1900–2100 · 掌图规则 2.0</text>
+  </view>
+</view>

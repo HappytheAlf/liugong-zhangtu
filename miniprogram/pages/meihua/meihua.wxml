@@ -1,0 +1,152 @@
+<view class="page">
+  <view class="hero">
+    <view class="brand">
+      <view class="seal">梅</view>
+      <view class="brand-copy">
+        <text class="eyebrow">MEIHUA YISHU · TIME</text>
+        <view class="title">梅花 <text class="title-accent">易数</text></view>
+        <text class="sub">时分起卦 · 主卦 / 互卦 / 变卦</text>
+      </view>
+    </view>
+  </view>
+
+  <view class="mode-switch">
+    <view class="mode-item" bindtap="goBack">小六壬</view>
+    <view class="mode-item is-active">梅花易数</view>
+  </view>
+
+  <view class="panel input-panel">
+    <view class="panel-head">
+      <text class="h2">起卦时间</text>
+      <text class="head-hint">{{nowText}}</text>
+    </view>
+
+    <view class="tabs">
+      <view class="tab {{mode === 'now' ? 'is-active' : ''}}" data-mode="now" bindtap="onMode">当前时间</view>
+      <view class="tab {{mode === 'manual' ? 'is-active' : ''}}" data-mode="manual" bindtap="onMode">指定时间</view>
+    </view>
+
+    <view wx:if="{{mode === 'manual'}}" class="manual-row">
+      <picker mode="time" value="{{solarTime}}" bindchange="onTimeChange">
+        <view class="picker-box">
+          <text class="picker-label">几点几分</text>
+          <text class="picker-value">{{solarTime}}</text>
+        </view>
+      </picker>
+    </view>
+
+    <button class="btn primary full" bindtap="cast">
+      {{mode === 'now' ? '以当前时间起卦' : '按指定时间起卦'}}
+    </button>
+    <text wx:if="{{error}}" class="error">{{error}}</text>
+  </view>
+
+  <block wx:if="{{result}}">
+    <view class="info-card">
+      <text class="info-date">{{result.dateText}}（{{result.lunarShort}}）{{result.timeShort}}</text>
+      <view class="info-report-row">
+        <text class="info-label">报数排盘</text>
+        <text class="info-report">（{{result.hour}}, {{result.minute}}）</text>
+        <text class="info-moving">动爻 {{result.movingLineText}}</text>
+      </view>
+    </view>
+
+    <view wx:if="{{result.pillars.length}}" class="pillars-card">
+      <view class="pillars-head">
+        <text class="pillars-title">时间旬空</text>
+        <text class="pillars-hint">年 · 月 · 日 · 时</text>
+      </view>
+      <view class="pillars-row">
+        <view class="pillar" wx:for="{{result.pillars}}" wx:key="key">
+          <view class="pillar-cell" wx:for="{{item.cells}}" wx:for-item="cell" wx:key="left">
+            <text class="pillar-char stem-{{item.elementKey}}">{{cell.left}}</text>
+            <text class="pillar-char pillar-kong-char">{{cell.right}}</text>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <view class="board-card">
+      <view class="board-head">
+        <text class="board-title">卦象</text>
+        <text class="board-hint">主 · 互 · 变</text>
+      </view>
+
+      <view class="hex-columns">
+        <view class="hex-col" wx:for="{{result.hexagrams}}" wx:key="key">
+          <text class="col-label">[{{item.shortLabel}}]</text>
+          <text class="col-palace">「{{item.palace.name}}」</text>
+
+          <view class="mini-yao-stack">
+            <view
+              wx:for="{{item.lines}}"
+              wx:for-item="line"
+              wx:key="number"
+              class="mini-yao line-{{line.elementKey}} {{line.moving ? 'is-moving' : ''}}"
+            >
+              <view class="mini-yao-body">
+                <view wx:if="{{line.value}}" class="mini-yao-solid"></view>
+                <view wx:else class="mini-yao-broken">
+                  <view class="mini-yao-seg"></view>
+                  <view class="mini-yao-seg"></view>
+                </view>
+              </view>
+              <text wx:if="{{line.moving}}" class="move-dot">{{line.mark === '变' ? '变' : '○'}}</text>
+            </view>
+          </view>
+
+          <text class="col-name">{{item.name}}</text>
+          <text class="col-trigram">{{item.upper.name}}上{{item.lower.name}}下</text>
+        </view>
+      </view>
+    </view>
+
+    <view class="panel question-panel">
+      <text class="question-title">所问之事</text>
+      <textarea
+        class="question-input"
+        value="{{question}}"
+        bindinput="onQuestionInput"
+        placeholder="写下所问之事（可不填）"
+        placeholder-class="question-placeholder"
+        maxlength="200"
+        auto-height
+        show-confirm-bar="{{false}}"
+      ></textarea>
+    </view>
+
+    <view class="panel detail-panel">
+      <view class="detail-toggle" bindtap="toggleDetails">
+        <text class="detail-title">起卦数与宫位</text>
+        <text class="detail-action">{{detailsOpen ? '收起' : '展开'}}</text>
+      </view>
+
+      <view wx:if="{{detailsOpen}}" class="detail-body">
+        <text class="detail-line">上卦：{{result.formula.upper}}</text>
+        <text class="detail-line">下卦：{{result.formula.lower}}</text>
+        <text class="detail-line">动爻：{{result.formula.moving}}</text>
+
+        <view class="palace-list">
+          <text class="palace-item">主卦 · {{result.main.palace.name}} · {{result.main.palace.element}}</text>
+          <text class="palace-item">互卦 · {{result.mutual.palace.name}} · {{result.mutual.palace.element}}</text>
+          <text class="palace-item">变卦 · {{result.changed.palace.name}} · {{result.changed.palace.element}}</text>
+        </view>
+
+        <view class="element-legend">
+          <text class="legend-item"><text class="legend-dot dot-wood"></text>木</text>
+          <text class="legend-item"><text class="legend-dot dot-fire"></text>火</text>
+          <text class="legend-item"><text class="legend-dot dot-earth"></text>土</text>
+          <text class="legend-item"><text class="legend-dot dot-metal"></text>金</text>
+          <text class="legend-item"><text class="legend-dot dot-water"></text>水</text>
+        </view>
+      </view>
+    </view>
+
+    <button class="btn primary full copy-btn" bindtap="copyResult">复制排盘结果</button>
+
+    <view class="disclaimer">
+      <text class="disclaimer-strong">免责声明：</text>
+      <text>本工具仅依据梅花易数时分起卦规则进行机械排盘，属于民俗文化娱乐参考，不构成预测、医疗、法律、投资等任何专业建议。请勿据此作出重大决定。</text>
+    </view>
+  </block>
+</view>

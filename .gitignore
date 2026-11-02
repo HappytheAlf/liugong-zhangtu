@@ -1,0 +1,20 @@
+# WeChat DevTools local settings
+project.private.config.json
+miniprogram/project.private.config.json
+
+# Dependencies
+node_modules/
+
+# Build archives and temporary files
+*.zip
+*.log
+preview/
+*.qr
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Local secrets and environment
+.env
+.env.*
