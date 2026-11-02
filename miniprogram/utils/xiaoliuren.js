@@ -1,4 +1,4 @@
-
+(function (root) {
     'use strict';
 
     const VERSION = '1.0.0';
@@ -689,7 +689,7 @@
       }
     }
 
-    module.exports = Object.freeze({
+    root.XLRCore = Object.freeze({
       VERSION: VERSION,
       PALACES: PALACES,
       SHICHEN: SHICHEN,
@@ -735,4 +735,8 @@
       isGregorianLeapYear: isGregorianLeapYear,
       getGregorianMonthDays: getGregorianMonthDays
     });
-  
+  })(typeof globalThis !== 'undefined' ? globalThis : this);
+
+if (typeof module === 'object' && module.exports) {
+  module.exports = globalThis.XLRCore;
+}

@@ -4,16 +4,29 @@
 
 - **小六壬**：农历日时起课，六宫掌图、六神、五星、六亲、藏干、后天八卦。
 - **梅花易数**：按小时、分钟起卦，主卦 / 互卦 / 变卦，动爻、卦宫、时间旬空。
-- **Web 单页**：无后端、无 CDN，直接打开即可使用。
+- **Web 静态页**：小六壬与梅花易数两个页面，无后端、无 CDN。
 - **微信小程序**：原生 WXML/WXSS/JS，可导入微信开发者工具。
+- **共享核心**：Web 与小程序复用 `core/` 下的纯函数模块。
 
 > 本项目只做机械排盘和传统文化展示，不包含吉凶断辞，不构成预测、医疗、法律、投资等专业建议。
 
+## 在线 Demo
+
+启用 GitHub Pages 后访问：
+
+<https://happythealf.github.io/liugong-zhangtu/web/>
+
+首次启用：仓库 **Settings → Pages → Source → GitHub Actions**，然后运行 `Deploy Web Demo` workflow。
+
 ## 截图
 
-![桌面端](docs/screenshots/desktop.png)
+![小六壬桌面端](docs/screenshots/desktop.png)
 
-![手机端](docs/screenshots/mobile.png)
+![小六壬手机端](docs/screenshots/mobile.png)
+
+![梅花易数桌面端](docs/screenshots/meihua-desktop.png)
+
+![梅花易数手机端](docs/screenshots/meihua-mobile.png)
 
 ## 功能
 
@@ -47,6 +60,11 @@ liugong-zhangtu/
 ├─ LICENSE
 ├─ README.md
 ├─ .gitignore
+├─ core/                     # 唯一核心源
+│  ├─ xiaoliuren.js
+│  └─ meihua.js
+├─ scripts/
+│  └─ sync-core.mjs          # 同步 core 到小程序
 ├─ miniprogram/              # 微信小程序
 │  ├─ app.js
 │  ├─ app.json
@@ -55,14 +73,21 @@ liugong-zhangtu/
 │  ├─ sitemap.json
 │  ├─ pages/index/           # 小六壬
 │  ├─ pages/meihua/          # 梅花易数
-│  └─ utils/
+│  └─ utils/                 # 由 sync-core 生成
 │     ├─ xiaoliuren.js
 │     └─ meihua.js
 ├─ web/
-│  └─ index.html             # 离线 Web 单页
+│  ├─ index.html             # Web 小六壬
+│  ├─ meihua.html            # Web 梅花易数
+│  ├─ meihua.css
+│  └─ meihua.js
 ├─ tests/
 │  ├─ core.test.mjs          # 小六壬核心测试
-│  └─ meihua.test.mjs        # 梅花易数核心测试
+│  ├─ meihua.test.mjs        # 梅花易数核心测试
+│  └─ sync.test.mjs          # core 与小程序副本一致性
+├─ .github/workflows/
+│  ├─ test.yml
+│  └─ pages.yml
 └─ docs/
    └─ screenshots/
 ```
@@ -74,10 +99,12 @@ liugong-zhangtu/
 直接用浏览器打开：
 
 ```text
-web/index.html
+web/index.html     # 小六壬
+web/meihua.html    # 梅花易数
 ```
 
-不需要安装依赖，不需要服务器。
+不需要安装依赖，不需要服务器。  
+如果把文件移动了位置，请同时保留 `core/` 目录；Web 页面通过 `../core/` 加载共享核心。
 
 ### 微信小程序
 
@@ -95,17 +122,27 @@ web/index.html
 ```bash
 npm test
 
-# 或分开运行
+# 单独运行
 node tests/core.test.mjs
 node tests/meihua.test.mjs
+node tests/sync.test.mjs
+```
+
+修改 `core/` 后同步到小程序：
+
+```bash
+npm run sync:core
 ```
 
 当前：
 
 - 小六壬核心测试 23 项
 - 梅花易数核心测试 7 项
+- 共享核心一致性测试 2 项
 
 ## 规则说明
+
+> 小六壬、梅花易数存在流派差异。以下写法是**本项目采用并固定的口径**，不代表唯一传统算法；跨流派使用前请先确认规则。
 
 ### 小六壬
 

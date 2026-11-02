@@ -9,6 +9,7 @@ node_modules/
 *.zip
 *.log
 preview/
+_site/
 *.qr
 
 # OS files

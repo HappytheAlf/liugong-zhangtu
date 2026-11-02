@@ -7,11 +7,8 @@ import { fileURLToPath } from 'node:url';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const require = createRequire(import.meta.url);
-const candidates = [
-  path.join(__dirname, '..', 'miniprogram', 'utils', 'meihua.js')
-];
-const corePath = candidates.find((candidate) => fs.existsSync(candidate));
-assert.ok(corePath, '应能找到 miniprogram/utils/meihua.js');
+const corePath = path.join(__dirname, '..', 'core', 'meihua.js');
+assert.ok(fs.existsSync(corePath), '应能找到 core/meihua.js');
 const M = require(corePath);
 
 test('梅花易数：10:27 报数起卦，主卦泽火革', () => {

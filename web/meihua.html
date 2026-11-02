@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="梅花易数时分起卦：主卦、互卦、变卦、动爻、卦宫与时间旬空。">
+  <title>梅花易数 · 时分起卦</title>
+  <link rel="stylesheet" href="./meihua.css">
+</head>
+<body>
+  <div class="page">
+    <header class="hero">
+      <div class="brand">
+        <div class="seal" aria-hidden="true">梅</div>
+        <div>
+          <p class="eyebrow">MEIHUA YISHU · TIME</p>
+          <h1>梅花 <span>易数</span></h1>
+          <p class="sub">时分起卦 · 主卦 / 互卦 / 变卦</p>
+        </div>
+      </div>
+      <div class="hero-meta">
+        <span class="live-dot" aria-hidden="true"></span>
+        <span>离线可用</span>
+        <span class="sep" aria-hidden="true"></span>
+        <span>无外部请求</span>
+      </div>
+    </header>
+
+    <nav class="tool-switch" aria-label="工具切换">
+      <a href="./index.html">小六壬</a>
+      <a class="is-active" href="./meihua.html" aria-current="page">梅花易数</a>
+    </nav>
+
+    <main class="layout">
+      <section class="panel input-panel" aria-labelledby="inputTitle">
+        <div class="panel-head">
+          <h2 id="inputTitle">起卦时间</h2>
+          <p id="nowText">当前 --:--:--</p>
+        </div>
+
+        <div class="time-row">
+          <label class="field-label" for="timeInput">几点几分</label>
+          <input id="timeInput" class="time-input" type="time" step="60">
+          <button id="castNow" class="btn ghost" type="button">当前时间</button>
+          <button id="castBtn" class="btn primary" type="button">按此时间起卦</button>
+        </div>
+        <p class="hint">只取小时和分钟，年月日不参与起卦。</p>
+        <p id="error" class="error" role="alert"></p>
+      </section>
+
+      <section id="result" class="result" hidden aria-live="polite">
+        <div class="info-card">
+          <p id="infoDate" class="info-date"></p>
+          <div class="info-report-row">
+            <span class="info-label">报数排盘</span>
+            <strong id="infoReport" class="info-report"></strong>
+            <span id="infoMoving" class="info-moving"></span>
+          </div>
+        </div>
+
+        <section class="pillars-card" aria-labelledby="pillarsTitle">
+          <div class="pillars-head">
+            <h2 id="pillarsTitle">时间旬空</h2>
+            <span>年 · 月 · 日 · 时</span>
+          </div>
+          <div id="pillars" class="pillars-row"></div>
+        </section>
+
+        <section class="board-card" aria-labelledby="boardTitle">
+          <div class="board-head">
+            <h2 id="boardTitle">卦象</h2>
+            <span>主 · 互 · 变</span>
+          </div>
+          <div id="hexagrams" class="hex-columns"></div>
+        </section>
+
+        <section class="panel question-panel" aria-labelledby="questionTitle">
+          <h2 id="questionTitle">所问之事</h2>
+          <textarea id="question" maxlength="200" placeholder="写下所问之事（可不填）"></textarea>
+        </section>
+
+        <section class="panel detail-panel">
+          <details>
+            <summary>起卦数与宫位</summary>
+            <div id="formula" class="formula"></div>
+          </details>
+        </section>
+
+        <div class="actions">
+          <button id="copyBtn" class="btn primary" type="button">复制排盘结果</button>
+          <span id="copyStatus" class="status" role="status"></span>
+        </div>
+
+        <div class="disclaimer">
+          <p><strong>免责声明：</strong>本工具仅依据梅花易数时分起卦规则进行机械排盘，属于民俗文化娱乐参考，不构成预测、医疗、法律、投资等任何专业建议。</p>
+        </div>
+      </section>
+    </main>
+
+    <footer class="footer">
+      <span>六宫掌图 · 梅花易数</span>
+      <span>时间旬空按四柱干支计算</span>
+    </footer>
+  </div>
+
+  <script src="../core/xiaoliuren.js"></script>
+  <script src="../core/meihua.js"></script>
+  <script src="./meihua.js"></script>
+</body>
+</html>

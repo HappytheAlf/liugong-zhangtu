@@ -2,20 +2,14 @@ import fs from 'node:fs';
 import path from 'node:path';
 import test from 'node:test';
 import assert from 'node:assert/strict';
+import { createRequire } from 'node:module';
 import { fileURLToPath } from 'node:url';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const htmlPath = path.join(__dirname, '..', 'web', 'index.html');
-const html = fs.readFileSync(htmlPath, 'utf8');
-const coreMatch = html.match(/\/\* ==== CORE START ==== \*\/([\s\S]*?)\/\* ==== CORE END ==== \*\//);
-
-assert.ok(coreMatch, 'index.html 中应存在 CORE START / CORE END 标记');
-
-// 在当前 realm 执行，避免 vm 跨 realm 导致 deepEqual 的原型不一致。
-delete globalThis.XLRCore;
-new Function(coreMatch[1])();
-const X = globalThis.XLRCore;
-assert.ok(X, '核心脚本应导出 XLRCore');
+const require = createRequire(import.meta.url);
+const html = fs.readFileSync(path.join(__dirname, '..', 'web', 'index.html'), 'utf8');
+const X = require(path.join(__dirname, '..', 'core', 'xiaoliuren.js'));
+assert.ok(X, '共享核心应导出 XLRCore');
 
 function pickLunar(value) {
   return { year: value.year, month: value.month, day: value.day, isLeap: value.isLeap };

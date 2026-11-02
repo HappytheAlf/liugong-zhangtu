@@ -5,6 +5,7 @@
   "description": "小六壬六宫掌图与梅花易数时分起卦，Web + 微信小程序",
   "license": "MIT",
   "scripts": {
-    "test": "node tests/core.test.mjs && node tests/meihua.test.mjs"
+    "test": "node tests/core.test.mjs && node tests/meihua.test.mjs && node tests/sync.test.mjs",
+    "sync:core": "node scripts/sync-core.mjs"
   }
 }
